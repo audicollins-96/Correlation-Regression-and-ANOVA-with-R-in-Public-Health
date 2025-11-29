@@ -1,0 +1,102 @@
+---
+title: "Descriptive Statistics"
+author: "Collins Audi"
+date: "2025-09-26"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Data Importation
+whitehall <- read.csv("C:/Users/audic/Desktop/Fossa/module1/Whitehall_fossa.csv", header = TRUE, sep =',')
+head(whitehall)
+```
+**Correlation and Scatter Plot in R**
+Running the scatter plot to check the relationship or correlation between BMI and systolic blood pressure. The scatterplot of BMI versus systolic blood pressure shows a very slight upward trend. This visual impression is confirmed by the Pearson correlation coefficient (r = 0.085), indicating a very weak positive relationship. The association is statistically significant (p < 0.001), but the narrow confidence interval (0.056 to 0.115) shows that BMI suggests only a small proportion of the variability in systolic blood pressure in this simulated Whitehall cohort.
+```{r}
+plot(whitehall$bmi, whitehall$sbp, xlab = "BMI (Kg/m2)", ylab = "Systolic Blood Pressure", cex = 0.8)
+
+cor.test(whitehall$bmi, whitehall$sbp, use=complete.obs)
+```
+**Running One-Way ANOVA in R**
+The findings show that SBP varies among the four BMI categories, with a highly significant p-value of 0.0001. Nonetheless, ANOVA is an overall test and does not specify which specific BMI groups differ significantly from one another.
+```{r}
+factored_white <- factor(whitehall$bmi_grp4)
+
+fit <- aov(whitehall$sbp~factored_white, data=whitehall)
+summary(fit)
+```
+**Running a Linear Regression Model with Continuous Independent Variable**
+The analysis shows a statistically significant positive association between Body Mass Index (BMI) and systolic blood pressure (SBP) in the Whitehall study data. The estimated regression coefficient for BMI is 0.45902 (p-value = 1.99e-08), meaning that for every one-unit increase in BMI, SBP is estimated to increase by 0.46 mmHg, on average. However, the model has very low predictive power, with an Adjusted R-squared of 0.007072 (less than 1%), indicating that BMI alone explains a negligible proportion of the variability in SBP.
+
+```{r}
+regfit1 <- lm(whitehall$sbp~whitehall$bmi, data = whitehall)
+summary(regfit1)
+```
+**Running a Linear Regression Model with Categorical Independent Variable**
+From the output above, the mean SBP rises with increasing BMI categories. Specifically, individuals in BMI group 4 (obese) have an average SBP that is 3.7 mmHg higher than those in BMI group 2 (normal weight) (95% CI: 1.7–5.6, p<0.001).
+```{r}
+#Creating a new empty BMI Column
+whitehall$bmi.grouped <- NA
+
+whitehall$bmi_fact<-factor(whitehall$bmi_grp4)
+is.factor(whitehall$bmi_fact)
+table(whitehall$bmi_fact)
+
+aggregate(
+  whitehall$sbp,              # x = systolic blood pressure values
+  list(whitehall$bmi_fact),   # group by BMI category factor
+  FUN = mean,                  # calculate mean in each group
+  na.rm = TRUE)               # remove NAs when computing mean
+
+
+#Model Fit
+fit2 <- lm(sbp ~ bmi_fact, data=whitehall)
+summary(fit2)
+
+#Confidence Interval of Parameters
+confint(fit2, level=0.95)
+
+#Creating a copy of the dataset for running the second regression model with releveling of bmi dummy by setting reference category
+
+whitehall2 <- whitehall
+
+#By default R will use the lowest category of bmi_fact as the reference in a regression. But this category is the smallest and hence it is not a good reference category as all comparisons with it will have large confidence intervals. We can change the reference category using the ‘relevel’ function:
+
+whitehall2<-within(whitehall2, bmi_fact<-relevel(bmi_fact,ref=2))
+
+#Then we fit the same linear regression again:
+fit3 <- lm(sbp ~ bmi_fact, data=whitehall2)
+summary(fit3)
+confint(fit3, level=0.95)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
