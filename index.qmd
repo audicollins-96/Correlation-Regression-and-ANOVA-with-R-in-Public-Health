@@ -76,10 +76,67 @@ fit3 <- lm(sbp ~ bmi_fact, data=whitehall2)
 summary(fit3)
 confint(fit3, level=0.95)
 ```
+**Running a Multiple Linear Regression Model**
+I ran a multiple linear regression model to examine the impact the association of BMI group on SBP, adjusted for LDL-C. As shown in the output, being overweight (BMI group 3), compared with normal weight (group 2), is associated with an average SBP that is 1.91 mmHg higher after adjusting for LDL-C (95% CI: 0.80–3.02, p=0.001). This association is slightly stronger for the overweight BMI group than it was before adjusting for LDL-C.
+
+```{r}
+multiple_fit <- lm(sbp ~ bmi_fact+ldlc, data=whitehall2)
+summary(multiple_fit)
+confint(multiple_fit, level=0.95)
+```
+**Adjusting for smoking status in the Multiple Regression model**
+On average, being obese is associated with an SBP that is 3.7 mmHg higher than being normal weight after adjusting for LDL-C and current smoking (95% CI: 1.74–5.63, p<0.001). This association remained unchanged when additionally adjusting for current smoking.
+
+Each covariate in the model can be interpreted as adjusted for the other covariates. For example, being a current smoker is associated with an SBP that is 0.56 mmHg lower compared to non-smokers, after adjusting for LDL-C and BMI group. However, the 95% CI includes the null value (0 in this case, since we are not using ratios; -2.15–1.02), indicating that this association is not statistically significant.
 
 
+```{r}
+multiple_fit2 <- lm(sbp ~ bmi_fact+ldlc+currsmoker, data=whitehall2)
+summary(multiple_fit2)
+```
 
+**Model Selection and F Test**
+**1. Testing if BMI contributes to model variation**
+The results indicate that the F-statistic for testing the joint hypothesis that all BMI-related coefficients are zero is approximately 7.7, with a p-value below 0.001. Although the regression output suggests that not every BMI category is individually associated with SBP, the F-test demonstrates that, collectively, the BMI variable contributes significantly to explaining variation in the model (F[3, 4265] = 7.74, p < 0.001).
 
+```{r}
+library(car)
+
+linearHypothesis(multiple_fit2, c("bmi_fact1=0", "bmi_fact3=0", "bmi_fact4=0"))
+
+```
+
+**1. Testing if LDLC and smoking contributes to model variation**
+We can see from the output that the null hypothesis is that both variables have a coefficient equal to 0. However, there is evidence to reject this null hypothesis (F[2,4265]=4.92, p<0.01). These variables are significantly contributing to model fit.
+
+```{r}
+library(car)
+
+linearHypothesis(multiple_fit2, c("ldlc=0", "currsmoker=0"))
+
+```
+
+**Checking for Normality of Residuals using Both Q-Q Plot and Histogram**
+Since the plots show slight skew, we will check for potential influential variables or outliers in our data.
+```{r}
+qqnorm(resid(multiple_fit2), main = "Q–Q Plot of Residuals")
+qqline(resid(multiple_fit2), col = "red")
+
+hist(resid(multiple_fit2), main="Histogram of the residuals", xlab="Residuals")
+```
+**Check for outliers / influential points**
+
+The chart confirms no significant influential variables.
+```{r}
+plot(influence.measures(multiple_fit2)$infmat[, "cook.d"])
+```
+
+**Fitted vs Residuals**
+There appears to be a random ball of dots, with no pattern. This is what we want. There does not appear to be heteroscedasticity.
+```{r}
+plot(resid(multiple_fit2) ~ fitted(multiple_fit2), main="The residuals versus the fitted values", xlab="Fitted values", ylab="Residuals", cex=0.8)
+abline(0,0, col=2)
+```
 
 
 
