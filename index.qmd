@@ -7,7 +7,7 @@ output:
   word_document: default
   pdf_document: default
 ---
-
+**About the Dataset:** The Whitehall Study (By Oxford FoSSA Course) is a simulated cohort study similar to the original Whitehall Study of Civil Servants, set up in the 1960s, which followed London-based male civil servants with a view to investigating cardiovascular disease and mortality. Participants from the original Whitehall cohort in the 1960s were flagged for mortality at the Office for National Statistics, which provided the date and cause of all deaths occurring until the end of September 2005. The (simulated) Whitehall FoSSA Study was conducted in 1997 to assess risk factors for cardiac and all-cause mortality in a subset of the original cohort that was still being followed. The Whitehall FoSSA Study contains information on 4,327 individuals that were followed-up from 1997 until 2005, and the variables are summarised in the table below. See Clarke et al. (2007), Arch Intern Med, 167(13) for more details on the real data that inspired this dataset.
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
