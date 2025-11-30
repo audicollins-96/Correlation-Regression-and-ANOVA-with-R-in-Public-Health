@@ -1,5 +1,5 @@
 
-# Whitehall FoSSA Study: Analysis Overview
+# Health Data Analysis in R: Correlation, Regression, and ANOVA Techniques
 
 This analysis used the **Whitehall FoSSA Study** dataset, a simulated cohort inspired by the original Whitehall Study of Civil Servants. The dataset includes **4,327 participants** followed from 1997 to 2005, with information on cardiovascular risk factors, including BMI, blood pressure, cholesterol, and smoking status.
 
